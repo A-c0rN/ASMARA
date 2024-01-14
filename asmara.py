@@ -1315,7 +1315,7 @@ class AS_MON(Process):
 class AS_MAN:
     global currentAlert
     global liveAlert
-    version = "0.1.68.7"
+    version = "0.1.69"
     __monitors__ = []
     __run__ = True
     __playback__ = False
@@ -2653,7 +2653,7 @@ def main(configFile):
 
 
 def boot():
-    parser = ArgumentParser(description="WACN Technologies ASMARA)")
+    parser = ArgumentParser(description="MissingTextures Software ASMARA)")
     parser.add_argument(
         "configFile",
         nargs="?",
@@ -2701,18 +2701,19 @@ def boot():
     args = parser.parse_args()
     if args.about:
         utilities.cls()
-        title = """ __        ___    ____ _   _   _____         _          
- \ \      / / \  / ___| \ | | |_   _|__  ___| |__       
-  \ \ /\ / / _ \| |   |  \| |   | |/ _ \/ __| '_ \      
-   \ V  V / ___ \ |___| |\  |   | |  __/ (__| | | |_    
-    \_/\_/_/___\_\____|_| \_|  _|_|\___|\___|_| |_(_)   
-    / \    / ___| |  \/  |    / \    |  _ \     / \     
-   / _ \   \___ \ | |\/| |   / _ \   | |_) |   / _ \    
-  / ___ \ _ ___) || |  | |_ / ___ \ _|  _ < _ / ___ \ _ 
- /_/   \_(_)____(_)_|  |_(_)_/   \_(_)_| \_(_)_/   \_(_)
-                                                        """
+        title = """    __  ___                ______     __               _____       ______                         
+   /  |/  /________  ____ /_  __/  __/ /___________   / ___/____  / __/ /__      ______ _________ 
+  / /|_/ / ___/ __ \/ __ `// / | |/_/ __/ ___/ ___/   \__ \/ __ \/ /_/ __/ | /| / / __ `/ ___/ _ \
+ / /  / (__  ) / / / /_/ // / _>  </ /_/ /  (__  )   ___/ / /_/ / __/ /_ | |/ |/ / /_/ / /  /  __/
+/_/  /_/____/_/ /_/\__, //_/ /_/|_|\__/_/  /____/   /____/\____/_/  \__/ |__/|__/\__,_/_/   \___/ 
+    ___     _____ /____/___  ___      ____    ___                                                 
+   /   |   / ___/  /  |/  / /   |    / __ \  /   |                                                
+  / /| |   \__ \  / /|_/ / / /| |   / /_/ / / /| |                                                
+ / ___ |_ ___/ / / /  / / / ___ |_ / _, _/ / ___ |                                                
+/_/  |_(_)____(_)_/  /_(_)_/  |_(_)_/ |_(_)_/  |_|                                                
+                                                                                                  """
         print(
-            f"{title}\nWACN Technologies AS_MAN.version {AS_MAN.version}\nAutomated System for Monitoring and Automatically Relaying Alerts\n\nCopyright 2022 WACN Technologies\n\nDeveloped by Anastasia M and Skylar G, in conjunction with GWES ERN.\n\nSpecial Thanks to:\n - Liam B\n - Marley H\n - Donald K\n\nThanks to FFMPEG and SAMEDEC for making good products!\n\n\nIn loving memory of Ash.\nWe never met, but I hope you would have at least liked the crazy in here. - Ana"
+            f"{title}\nMissingTextures Software AS_MAN.version {AS_MAN.version}\nAutomated System for Monitoring and Automatically Relaying Alerts\n\nCopyright (c) 2024 MissingTextures Software\n\nDeveloped by Anastasia M and Skylar G.\n\nThanks to FFMPEG and SAMEDEC for making good products!\n\n\nIn loving memory of Ash.\nWe never met, but I hope you would have at least liked the crazy in here. - Ana"
         )
         exit(0)
     if not args.log_level:
@@ -2722,7 +2723,7 @@ def boot():
         while True:
             utilities.cls()
             utilities.autoPrint(
-                f"WACN TECHNOLOGIES ASMARA {AS_MAN.version}\n====================================",
+                f"MISSINGTEXTURES SOFTWARE ASMARA {AS_MAN.version}\n====================================",
                 sev=severity.boot,
             )
             utilities.autoPrint(f"OS: {utilities.getOS()}", sev=severity.debug)
