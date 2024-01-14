@@ -1,0 +1,58 @@
+This file is here to help understand the app flow of ASMARA
+
+
+Functions / Classes:
+boot Func:
+  Parses Arguements, and calls MAIN Functions
+main:
+  Takes in Config File and creates an AS_MAN class
+
+
+File Flow:
+
+asmara.py (imports utilities.py)
+
+
+Program Flow:
+
+run > boot > main > AS_MAN*
+                      > Init
+                          > setConfig
+                          > MakeConfig
+                          > loadConfig
+                              > setLog
+                              > setIcePlayout
+                              > setCallsign
+                              > setLocalFIPS
+                              > setLeadIn
+                              > setLeadOut
+                              > setSamplerate
+                              > setChannels
+                              > setLogger
+                              > setEmail
+                              > setExport
+                              > setFilters
+                              > loadLogs
+                              > setTone
+                          > MANAGER*
+                              > AlertFileDump
+                          > OVERRIDE*
+                              > alertToOld
+                          > PLAYOUT*
+                              > SetIcePlayer
+                              > UpdateIcecastNP
+                                  > Make URL Ready 
+                              > KillIcePlayer
+                          > DATAPUMP*
+                              > AddCount
+                          > AUTODJ*
+                          > AS_MON* (Per Monitor)
+                              > DECODER*
+                                  > samedec*
+                                  > alertToOld
+                                  > Filter
+                              > MONITOR*
+                                  > ffmpeg|rtl_fm*
+                                  > ATTN Detect
+                                  > alertToOld
+                                  > RELAY

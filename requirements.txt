@@ -1,0 +1,6 @@
+EAS2Text
+EASGen
+pydub
+discord_webhook==0.17.0
+requests
+numpy
