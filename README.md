@@ -1,4 +1,4 @@
-# WACN TECH - ASMARA
+# MissingTextures Software - ASMARA
 ### Automated System for Monitoring And Relaying Alerts
 
 <IMG HERE WHEN AVAILABLE>
@@ -111,47 +111,4 @@ to use `.config2` as the selected config file. If the file does not exist, it wi
 ## Changelog
 DO LATER
 
-## License
-This software is licensed under `GWES-ERN LIDS` for ERN Network Development Partners (`ERN-ND`). This license applies to any and all user(s) of this software.
-
-Please read the license carefully.
-
-```
-Global Weather and EAS Society EAS Relay Network License for Internally Developed Software
-
-Internally developed software developed by the Network Development team ("ERN-ND") is granted to those who have access as a privilege, not a right.
-
-As such, ERN-ND can take away access to said software under this license agreement. Usage of the software means that you, the end user, agree to all provisions within this agreement.
-
-Alright, now that the legal stuff is out of the way, here is what you can do under this license agreement:
-
-- Use the software
-- Make changes to the configuration of the software
-- If access was granted by ERN-ND, modifications to the source code are allowed, however the changes are limited to:
-        - Quality of Life
-        - Extended functionality in specific applications
-        - Aesthetic modifications
-        - Porting to unsupported platforms
-  These changes are allowed under the condition that:
-        - Source code modifications are made available to ERN-ND
-        - They are not designed to bypass security regarding Software Licensing or gaining access to IPAWS.
-        - You declare to ERN-ND that by modifying the software, you are relinquishing any further support for software issues regarding the modifications unless the modifications make it into the main source tree using a pull request that is approved.
-        - This license is retained within the software in a unmodified state.
-
-Here is what you can't do:
-
-        - Make unauthorized changes to the software
-        - Reverse engineer the software
-        - Bypass the activation of the software
-        - Redistribute the software
-        - Run the software on any electronic device that is owned (or hosted) by an individual not bound under this license agreement
-        - Attempt to retrieve the GWES-ERN IPAWS Access Key without express authorization by the Network Operations team.
-
-
-Violations of this agreement will result in removal of access to any software that is developed under this agreement and may prevent you from being eligible for further software access indefinitely.
-
-TL;DR- You can use the software, change the software config, and make modifications as long as they are not extensive and code is made available to network devs. Just know we won't help you if you break it.
-Any violations will make you look like a jackass and access will be revoked as needed. You wouldn't download a car so why steal shit you don't own.
-```
-
-###### Copyright © 2023 WACN Technologes and GWES ERN
+###### Copyright © 2024 MissingTextures Software
