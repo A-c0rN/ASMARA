@@ -1,0 +1,5 @@
+qrcodes/
+__pycache__
+secret_key.txt
+ssl_cert.pem
+ssl_key.key
