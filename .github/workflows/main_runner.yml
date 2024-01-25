@@ -1,0 +1,62 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install Dependancies
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: python3-pip python3-pyaudio ffmpeg curl git
+        version: 1.0
+    - name: Install Python Requirements
+      run: |
+        if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+        python3 -m pip install flake8
+    - name: Install SAMEDEC Decoder
+      run: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -q -y --profile default
+        git clone https://github.com/cbs228/sameold.git
+        cd sameold
+        cargo install --path crates/samedec
+        source $HOME/.cargo/env
+        cd ..
+        rm -rf sameold
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        python3 -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        python3 -m flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    # TODO: Wrtie Pytest files
+    # - name: Test with pytest
+    #   run: |
+    #     pytest
+    - name: Check ASMARA Version
+      run: python3 asmara.py -V
+    # TODO: Make a new config exit after startup due to no inputs/outputs
+    # - name: Run ASMARA
+    #   run: python3 asmara.py -d
+    - name: 'Cleanup build folder'
+      run: |
+        ls -la ./
+        rm -rf ./* || true
+        rm -rf ./.??* || true
+        ls -la ./
