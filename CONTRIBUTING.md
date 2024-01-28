@@ -12,7 +12,7 @@ Thank you for considering contributing to our project! We appreciate your effort
 
 4. **Test Your Changes**: Before submitting a pull request, test your changes locally to ensure they function as expected. If applicable, write tests to cover your code changes.
 
-5. **Commit Your Changes**: Commit your changes with clear and concise commit messages. Include details about what you have changed and why.
+5. **Commit Your Changes**: Commit your changes with clear and concise commit messages. Include details about what you have changed and why, Include in-depth documentation on changes both in the commits and in the pull requests, including any relevant context or reasoning.
 
    ```bash
    git add .
@@ -22,7 +22,7 @@ Thank you for considering contributing to our project! We appreciate your effort
    ```bash
    git push origin <your-branch-name>
    ```
-7. **Submit a Pull Request**: Go to the original repository (upstream) and create a pull request from your forked branch. Provide a detailed description of your changes, including any relevant context or reasoning.
+7. **Submit a Pull Request**: Go to the original repository (upstream) and create a pull request from your forked branch. Include in-depth documentation on changes both in the commits and in the pull requests, including any relevant context or reasoning.
 8. **Review Process**: After submitting your pull request, a project maintainer will review your changes. Be responsive to any feedback or requests for revisions.
 9. **Address Feedback**: If requested changes are needed, make the necessary updates to your branch and push the changes. Your pull request will be re-evaluated after the updates.
 10. Merge: Once your pull request is approved and all checks pass, it will be merged into the main branch, Congratulations on your contribution!
