@@ -922,7 +922,10 @@ class AS_MON(Process):
                                 )
                                 liveAlert[alertName] = ["LEAD-IN"]
                                 liveAlert[alertName].append(leadIn)
-                            liveAlert[alertName] = ["HEADER_HEADER_HEADER"]
+                                liveAlert[alertName].append("HEADER_HEADER_HEADER")
+                            else:
+                                liveAlert[alertName] = ["HEADER_HEADER_HEADER"]
+                            
                             liveAlert[alertName].append(alert)
                             liveAlert[alertName].append("TONE_TONE_TONE")
                             liveAlert[alertName].append(tone)
