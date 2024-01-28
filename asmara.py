@@ -910,7 +910,22 @@ class AS_MON(Process):
                                 self.__alertData__["Protocol"],
                                 self.__alertData__,
                             )
-                            liveAlert[alertName] = ["HEADER_HEADER_HEADER"]
+                            if AS_MAN.__config__["PlayoutManager"]["LeadIn"]["Enabled"]:
+                                file = AS_MAN.__config__["PlayoutManager"]["LeadIn"]["File"]
+                                type = AS_MAN.__config__["PlayoutManager"]["LeadIn"]["Type"]
+                                leadIn = AudioSegment.silent(500) + AudioSegment.from_file(
+                                    file=file, format=type
+                                ).set_frame_rate(AS_MAN.__samplerate__).set_sample_width(
+                                    2
+                                ).set_channels(
+                                    1
+                                )
+                                liveAlert[alertName] = ["LEAD-IN"]
+                                liveAlert[alertName].append(leadIn)
+                                liveAlert[alertName].append("HEADER_HEADER_HEADER")
+                            else:
+                                liveAlert[alertName] = ["HEADER_HEADER_HEADER"]
+                            
                             liveAlert[alertName].append(alert)
                             liveAlert[alertName].append("TONE_TONE_TONE")
                             liveAlert[alertName].append(tone)
@@ -949,6 +964,20 @@ class AS_MON(Process):
                         liveAlert[alertName].append("EOM_EOM_EOM")
                         liveAlert[alertName].append(EOM)
                         liveBuff += EOM
+                        if AS_MAN.__config__["PlayoutManager"]["LeadOut"]["Enabled"]:
+                            file = AS_MAN.__config__["PlayoutManager"]["LeadOut"]["File"]
+                            type = AS_MAN.__config__["PlayoutManager"]["LeadOut"]["Type"]
+                            leadOut = AudioSegment.from_file(
+                                file=file, format=type
+                            ).set_frame_rate(AS_MAN.__samplerate__).set_sample_width(
+                                2
+                            ).set_channels(
+                                1
+                            ) + AudioSegment.silent(
+                                500
+                            )
+                            liveAlert[alertName].append("LEAD-OUT")
+                            liveAlert[alertName].append(leadOut)
                         self.__monitor__["Live"] = False
                         alertGenerated = False
                         self.__LiveUnlock__()
@@ -2428,7 +2457,13 @@ class AS_MAN:
                         while len(liveAlert[liveIndex]) != 0:
                             segment = liveAlert[liveIndex].pop(0)
                             if type(segment) == str:
-                                if segment == "HEADER_HEADER_HEADER":
+                                if segment == "LEAD-IN":
+                                    utilities.autoPrint(
+                                        text=f"SENDING LEAD-IN.",
+                                        classType="PLAYOUT",
+                                        sev=severity.playoutStats,
+                                    )
+                                elif segment == "HEADER_HEADER_HEADER":
                                     utilities.autoPrint(
                                         text=f"SENDING HEADERS.",
                                         classType="PLAYOUT",
@@ -2449,6 +2484,12 @@ class AS_MAN:
                                 elif segment == "EOM_EOM_EOM":
                                     utilities.autoPrint(
                                         text=f"SENDING EOMS.",
+                                        classType="PLAYOUT",
+                                        sev=severity.playoutStats,
+                                    )
+                                elif segment == "LEAD-OUT":
+                                    utilities.autoPrint(
+                                        text=f"SENDING LEAD-OUT.",
                                         classType="PLAYOUT",
                                         sev=severity.playoutStats,
                                     )
@@ -2488,6 +2529,19 @@ class AS_MAN:
                                 ("LEAD-IN", self.__leadIn__),
                                 (
                                     f"OVERRIDE AUDIO FILE {alertData['Protocol']}",
+                                    AudioSegment.silent(500)
+                                    + alertData["Audio"]
+                                    + AudioSegment.silent(500),
+                                ),
+                                ("LEAD-OUT", self.__leadOut__),
+                            ]
+                        elif alertData["Type"] == "CAP":
+                            Event = alertData["Event"]
+                            oof = f"Relaying {Event} from CAPDEC."
+                            segments = [
+                                ("LEAD-IN", self.__leadIn__),
+                                (
+                                    f"CAP AUDIO FILE {alertData['Protocol']}",
                                     AudioSegment.silent(500)
                                     + alertData["Audio"]
                                     + AudioSegment.silent(500),
