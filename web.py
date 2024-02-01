@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, template_folder='templates')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/database'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/asmara'
 db = SQLAlchemy(app)
 app.secret_key = 'your_secret_key' # PLEASE PLEASE GENERATE A EXTREMELY LONG PASSWORD HERE!
 

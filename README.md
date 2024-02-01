@@ -114,7 +114,7 @@ To test the webserver, install mariadb and do the following commands
 sudo mariadb
 CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost';
-CREATE DATABASE database;
+CREATE DATABASE asmara;
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50),
@@ -125,7 +125,7 @@ then, go in web.py and change line 16 to the information you filled out for your
 
 to make a user, do the commands in mariadb
 ```
-USE database_name;
+USE asmara;
 INSERT INTO users (username, password) VALUES ('username', 'password');
 ```
 To run the webserver, do the following
