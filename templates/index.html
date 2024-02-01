@@ -12,7 +12,38 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}"> 
         <script src="https://cdn.tailwindcss.com"></script>
-
+        <script>
+            var timeoutId;
+            var logoutTimeout = 10 * 60 * 1000; // 10 minutes in milliseconds
+            var warningTime = 5 * 1000; // 5 seconds in milliseconds
+        
+            function resetTimer() {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(logoutUser, logoutTimeout);
+            }
+        
+            function logoutUser() {
+                if (!confirm("You have been inactive for 10 minutes. Are you still here?")) {
+                    window.location.href = "/logout";
+                } else {
+                    resetTimer();
+                    // Call the server to extend the session
+                    fetch('/extend_session', { method: 'POST' });
+                }
+            }
+        
+            // Reset the timer on any interaction
+            window.onload = resetTimer;
+            window.onmousemove = resetTimer;
+            window.onmousedown = resetTimer;
+            window.ontouchstart = resetTimer;
+            window.onclick = resetTimer;
+            window.onscroll = resetTimer;
+            window.onkeypress = resetTimer;
+        
+            // Start the timer
+            resetTimer();
+        </script>
     </head>
     <body class="bg-gray-800">
         <nav class="bg-blue-500 p-2 mb-4">
@@ -28,6 +59,9 @@
                 </div>
                 <div>
                     <a href="/logout" class="text-white text-lg font-bold">Logout</a>
+                </div>
+                <div>
+                    <p class="text-white text-lg font-bold">Welcome {{ username }}</p>
                 </div>
             </div>
         </nav>

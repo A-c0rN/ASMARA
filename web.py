@@ -11,7 +11,7 @@ from pytz import utc
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
-webhook = DiscordWebhook(url="webhook here")
+webhook = DiscordWebhook(url="webhook here", username="ASMARA 2FA", avatar_url="https://avatars.githubusercontent.com/u/20572623?v=4")
 
 
 
@@ -39,7 +39,8 @@ def login_required(f):
 @app.route('/')
 @login_required
 def home():
-    return render_template('index.html')
+    username = session.get('username', '')
+    return render_template('index.html', username=username)
 
 
 
@@ -56,11 +57,19 @@ def login():
             send_discord_message(code)
             # Store the code and its expiration time in the session
             session['code'] = {'value': code, 'expires_at': datetime.now(utc) + timedelta(seconds=30)}
+            # Store the username in the session
+            session['username'] = username
             return redirect(url_for('verify_code'))
         else:
             return 'Invalid credentials', 401
     else:
         return render_template('login.html')
+    
+@app.route('/extend_session', methods=['POST'])
+def extend_session():
+    # Extend the session timeout here
+    # You might need to implement session management logic based on your application's requirements
+    return '', 204
     
 @app.route('/verify_code', methods=['GET', 'POST'])
 def verify_code():
