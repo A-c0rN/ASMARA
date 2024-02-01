@@ -135,7 +135,7 @@ Make a discord server, and a webhook, copy the webhook url and put it in web.py
 To run the webserver, do the following
 ```
 
-python3 -m pip install flask flask_sqlalchemy mysqlclient
+python3 -m pip install flask flask_sqlalchemy mysqlclient pytz
 
 python3 web.py 
 ```
