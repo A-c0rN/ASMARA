@@ -1,4 +1,4 @@
-#footer {
+#footer-right {
   position: fixed;
   bottom: 0;
   right: 0;
@@ -7,7 +7,7 @@
   font-size: 12px; /* Adjust this value to your liking */
 }
 
-#footer2 {
+#footer-left {
   position: fixed;
   bottom: 0;
   left: 0;
