@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 #Third Party
 
-from flask import Flask, render_template, request, session, redirect, url_for, flash, get_flashed_messages
+from flask import Flask, render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from pytz import utc
 from discord_webhook import DiscordWebhook, DiscordEmbed
