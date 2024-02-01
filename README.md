@@ -129,6 +129,9 @@ to make a user, do the commands in mariadb
 USE asmara;
 INSERT INTO users (username, password) VALUES ('username', 'password');
 ```
+(NEW & required) 2FA:
+Make a discord server, and a webhook, copy the webhook url and put it in web.py
+
 To run the webserver, do the following
 ```
 
