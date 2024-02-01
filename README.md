@@ -122,7 +122,7 @@ CREATE TABLE users (
     password VARCHAR(50)
 );
 ```
-then, go in web.py and change line 16 to the information you filled out for your table..
+then, go in web.py and change line 21 to the information you filled out for your table..
 
 to make a user, do the commands in mariadb
 ```

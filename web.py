@@ -11,23 +11,25 @@ from pytz import utc
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
+#Here we define the webhook
 webhook = DiscordWebhook(url="webhook here", username="ASMARA 2FA", avatar_url="https://avatars.githubusercontent.com/u/20572623?v=4")
 
 
 
-
+#Define Flask and COnfiguration
 app = Flask(__name__, template_folder='templates')
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/asmara'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/asmara' #Change this!
 db = SQLAlchemy(app)
 app.secret_key = 'your_secret_key' # PLEASE PLEASE GENERATE A EXTREMELY LONG PASSWORD HERE!
 
+#Make Database Model
 class users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
     password = db.Column(db.String(50))
 
 
+#Define the @ you put infront of a route if login is required
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -36,6 +38,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+#index.html route
 @app.route('/')
 @login_required
 def home():
@@ -43,7 +46,7 @@ def home():
     return render_template('index.html', username=username)
 
 
-
+#login.html route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -65,12 +68,12 @@ def login():
     else:
         return render_template('login.html')
     
+#extend session route, for when you go AFK on index.html
 @app.route('/extend_session', methods=['POST'])
 def extend_session():
-    # Extend the session timeout here
-    # You might need to implement session management logic based on your application's requirements
     return '', 204
     
+#2FA Route
 @app.route('/verify_code', methods=['GET', 'POST'])
 def verify_code():
     # Check if the code exists in the session
@@ -94,12 +97,14 @@ def verify_code():
         return render_template('verify_code.html')
 
 
-    
+#Logout Route
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
+
+#Discord 2FA Embed
 def send_discord_message(content):
   embed = DiscordEmbed(title="2FA Code Requested", description="Code: " + str(content) + " If you didn't request this code, its safe to ignore this message..", color="03b2f8")
   embed.set_author(name="ASMARA")
