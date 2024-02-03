@@ -108,6 +108,40 @@ python3 asmara.py -vvvv .config2
 to use `.config2` as the selected config file. If the file does not exist, it will be created.
 > Note: The config file *must* always come after the flags. Adding a flag after the config file may result in unexpected behavior.
 
+## Web Testing
+To test the webserver, install mariadb and do the following commands
+```
+sudo mariadb
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost';
+CREATE DATABASE asmara;
+USE asmara;
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(50)
+);
+```
+then, go in web.py and change line 21 to the information you filled out for your table..
+
+to make a user, do the commands in mariadb
+```
+USE asmara;
+INSERT INTO users (username, password) VALUES ('username', 'password');
+```
+(NEW & required) 2FA:
+Make a discord server, and a webhook, copy the webhook url and put it in web.py
+
+To run the webserver, do the following
+```
+
+python3 -m pip install flask flask_sqlalchemy mysqlclient pytz
+
+python3 web.py 
+```
+it should work, you can now go to the ip:port/ and it should redirect to the login page.
+
+
 ## Changelog
 DO LATER
 

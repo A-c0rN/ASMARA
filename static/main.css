@@ -1,0 +1,17 @@
+#footer-right {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0); /* semi-transparent black */
+  color: white;
+  font-size: 12px; /* Adjust this value to your liking */
+}
+
+#footer-left {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0); /* semi-transparent black */
+  color: white;
+  font-size: 12px; /* Adjust this value to your liking */
+}
