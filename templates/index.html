@@ -12,38 +12,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}"> 
         <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            var timeoutId;
-            var logoutTimeout = 10 * 60 * 1000; // 10 minutes in milliseconds
-            var warningTime = 5 * 1000; // 5 seconds in milliseconds
-        
-            function resetTimer() {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(logoutUser, logoutTimeout);
-            }
-        
-            function logoutUser() {
-                if (!confirm("You have been inactive for 10 minutes. Are you still here?")) {
-                    window.location.href = "/logout";
-                } else {
-                    resetTimer();
-                    // Call the server to extend the session
-                    fetch('/extend_session', { method: 'POST' });
-                }
-            }
-        
-            // Reset the timer on any interaction
-            window.onload = resetTimer;
-            window.onmousemove = resetTimer;
-            window.onmousedown = resetTimer;
-            window.ontouchstart = resetTimer;
-            window.onclick = resetTimer;
-            window.onscroll = resetTimer;
-            window.onkeypress = resetTimer;
-        
-            // Start the timer
-            resetTimer();
-        </script>
     </head>
     <body class="bg-gray-800">
         <nav class="bg-blue-500 p-2 mb-4">
@@ -75,6 +43,51 @@
         <![endif]-->
         <div id="footer-right">Webserver Made with ♡ by Reggie Torres and Anastasia Mayer</div>
         <div id="footer-left">Copyright © 2024 MissingTextures Software</div>
-        
+
+        <div class="fixed bottom-0 right-0 m-4 bg-red-500 text-white p-4 rounded shadow-lg" id="logoutWarning" style="display: none;">
+            <p>You will be logged out in 5 seconds due to inactivity. Click the button below to extend your session.</p>
+            <button onclick="extendSession()" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Extend Session</button>
+        </div>
+        <!-- ... -->
+        <script>
+            var logoutWarningTimeout;
+            var logoutTimeout = 5 * 1000; // 5 seconds in milliseconds
+    
+            function showLogoutWarning() {
+                document.getElementById('logoutWarning').style.display = 'block';
+                logoutWarningTimeout = setTimeout(logoutUser, logoutTimeout);
+            }
+    
+            function hideLogoutWarning() {
+                document.getElementById('logoutWarning').style.display = 'none';
+                clearTimeout(logoutWarningTimeout);
+            }
+    
+            function extendSession() {
+                hideLogoutWarning();
+                // Call the server to extend the session
+                fetch('/extend_session', { method: 'POST' }).then(response => {
+                    if (response.ok) {
+                        console.log('Session extended successfully');
+                    } else {
+                        console.error('Failed to extend session');
+                    }
+                });
+            }
+    
+            function logoutUser() {
+                window.location.href = "/logout";
+            }
+    
+            // Show the logout warning after 5 seconds of inactivity
+            window.onload = () => {
+                setTimeout(showLogoutWarning, logoutTimeout);
+            };
+    
+            // Reset the timer on any interaction
+            ['mousemove', 'mousedown', 'touchstart', 'click', 'scroll', 'keypress'].forEach(eventName => {
+                window.addEventListener(eventName, hideLogoutWarning);
+            });
+        </script>
     </body>
 </html>
