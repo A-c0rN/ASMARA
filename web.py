@@ -5,14 +5,14 @@ from datetime import datetime, timedelta
 
 #Third Party
 
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from pytz import utc
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
 #Here we define the webhook
-webhook = DiscordWebhook(url="webhook here", username="ASMARA 2FA", avatar_url="https://avatars.githubusercontent.com/u/20572623?v=4")
+webhook = DiscordWebhook(url="webhook here", username="ASMARA 2FA", avatar_url="https://github.com/A-c0rN/ASMARA/blob/main/assets/asmara-logo-only.png?raw=true")
 
 
 
@@ -37,6 +37,15 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
+
+
+@app.route('/assets/<path:filename>')
+def serve_public_file(filename):
+    return send_from_directory('assets', filename)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory('assets', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 #index.html route
 @app.route('/')

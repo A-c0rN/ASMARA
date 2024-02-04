@@ -124,6 +124,8 @@ CREATE TABLE users (
 ```
 then, go in web.py and change line 21 to the information you filled out for your table..
 
+go to line 23 in web.py and generate a **VERY** long secret key!
+
 to make a user, do the commands in mariadb
 ```
 USE asmara;
