@@ -7,7 +7,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>Login | ASMARA</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.tailwindcss.com"></script>
@@ -16,9 +16,12 @@
     <body>
         <div class="min-h-screen flex items-center justify-center bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
+                <div class="flex justify-center">
+                    <img src="{{ url_for('static', filename='../assets/asmara-white-text.png') }}" alt="ASMARA Logo" style="max-width: 100%; height: auto;">
+                </div>
                 <div>
                     <h2 class="mt-6 text-center text-3xl font-extrabold text-white">
-                        Sign in to your ASMARA Encoder
+                        Sign in.
                     </h2>
                 </div>
                 <form class="mt-8 space-y-6" action="/login" method="post">
