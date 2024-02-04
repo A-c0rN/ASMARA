@@ -45,13 +45,13 @@
         <div id="footer-left">Copyright © 2024 MissingTextures Software</div>
 
         <div class="fixed bottom-0 right-0 m-4 bg-red-500 text-white p-4 rounded shadow-lg" id="logoutWarning" style="display: none;">
-            <p>You will be logged out in 5 seconds due to inactivity. Click the button below to extend your session.</p>
+            <p>You will be logged out in 30 seconds due to inactivity. Click the button below to extend your session.</p>
             <button onclick="extendSession()" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Extend Session</button>
         </div>
         <!-- ... -->
         <script>
             var logoutWarningTimeout;
-            var logoutTimeout = 5 * 1000; // 5 seconds in milliseconds
+            var logoutTimeout = 30000; // 30 seconds in milliseconds
     
             function showLogoutWarning() {
                 document.getElementById('logoutWarning').style.display = 'block';
