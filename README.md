@@ -1,11 +1,10 @@
-# MissingTextures Software - ASMARA
+
+![ASMARA](https://github.com/A-c0rN/ASMARA/blob/main/assets/asmara-white-text.png)
+
 ### Automated System for Monitoring And Relaying Alerts
-
-<IMG HERE WHEN AVAILABLE>
-
-<STATS HERE WHEN AVAILABLE>
-
 The comprehensive software EAS solution.
+
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/A-c0rN/ASMARA/main_runner.yml?style=flat-square) ![GitHub language count](https://img.shields.io/github/languages/count/A-c0rN/ASMARA?style=flat-square) ![GitHub](https://img.shields.io/github/license/A-c0rN/ASMARA?style=flat-square)
 
 ## Features
 > - [x] EAS Generation and Translation using stable and tested systems
