@@ -1,6 +1,5 @@
 import pyotp, qrcode, secrets, argparse, mysql.connector, sys, colorama, os
 from datetime import datetime, timedelta
-from colorama import Fore
 from mysql.connector import Error
 
 from cryptography import x509
@@ -12,7 +11,6 @@ from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.hazmat.primitives.serialization import PrivateFormat
 from cryptography.hazmat.primitives.serialization import NoEncryption
 
-colorama.init()
 
 USEQUERY = "USE asmara;"
 
@@ -88,9 +86,9 @@ def create_connection():
             user='username',
             password='password'
         )
-        print(Fore.YELLOW + "Connection to MariaDB successful" + Fore.WHITE)
+        print("Connection to MariaDB successful")
     except Error as e:
-        print(Fore.RED + f"The error '{e}' occurred" + Fore.WHITE)
+        print(f"The error '{e}' occurred")
 
     return connection
 
@@ -129,7 +127,7 @@ def initialize_database(connection):
        mimetype VARCHAR(255)
    );""")
     connection.commit()
-    print(Fore.GREEN + "Database and table initialized successfully." + Fore.WHITE)
+    print("Database and table initialized successfully.")
 
 def list_users(connection, show_pass):
     cursor = connection.cursor()
@@ -162,9 +160,9 @@ def remove_user(connection, user_id=None, username=None):
     affected_rows = cursor.rowcount
     connection.commit()
     if affected_rows >  0:
-        print(Fore.GREEN + f"User {'with ID/Username ' + str(user_id) if user_id else 'named ' + username} removed successfully from users table." + Fore.WHITE)
+        print(f"User {'with ID/Username ' + str(user_id) if user_id else 'named ' + username} removed successfully from users table.")
     else:
-        print(Fore.RED + f"No user found with {'ID ' + str(user_id) if user_id else 'username ' + username}." + Fore.WHITE)
+        print(f"No user found with {'ID ' + str(user_id) if user_id else 'username ' + username}.")
 
 def make2fa(username):
     # Generate a secret key
@@ -178,12 +176,12 @@ def make2fa(username):
     # Ensure the qrcodes directory exists
     qr_dir = "qrcodes"
     if not os.path.exists(qr_dir):
-        print(Fore.YELLOW + "qrcodes folder does not exist! Making.." + Fore.WHITE)
+        print("qrcodes folder does not exist! Making..")
         os.makedirs(qr_dir)
 
     # Save the QR code
     qr_img.save(f"{qr_dir}/totp_qrcode-{username}.png")
-    print(Fore.GREEN + "2FA Successfully Generated" + Fore.WHITE)
+    print("2FA Successfully Generated")
 
     return secret
 
@@ -195,14 +193,14 @@ def insert_user(connection, username, password):
     query = """INSERT INTO users (username, password, secret) VALUES (%s, %s, %s)"""
     cursor.execute(query, (username, password, secret))
     connection.commit()
-    print(Fore.GREEN + f"User {username} inserted successfully into users table with generated secret." + Fore.WHITE)
+    print(f"User {username} inserted successfully into users table with generated secret.")
 
 def close_connection(connection):
     if connection.is_connected():
         cursor = connection.cursor()
         cursor.close()
         connection.close()
-        print(Fore.YELLOW + "MySQL connection is closed" + Fore.WHITE)
+        print("MySQL connection is closed")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Manage users in the database.')
@@ -243,7 +241,7 @@ if __name__ == '__main__':
         elif args.username:
             remove_user(connection, username=args.username)
         else:
-            print(Fore.RED + "Please provide either a user ID or a username." + Fore.WHITE)
+            print("Please provide either a user ID or a username.")
     elif args.command == 'list':
         list_users(connection, args.show_pass)
     elif args.command == 'init':
