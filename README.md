@@ -136,6 +136,14 @@ python3 web.py
 ```
 it should work, you can now go to the ip:port/ and it should redirect to the login page.
 
+### HTTPS/SSL
+You might've noticed that when you run the server normally, you get a warning, This is because you haven't setup HTTPS/SSL. All you have to do to set it up is run
+
+```
+python3 userdb.py mkSSL
+```
+
+And now you have a secure server, you might get a warning on a browser though, thats because it's selfsigned, but it should still be just as secure as if you got it signed by a CA
 
 ## Changelog
 DO LATER

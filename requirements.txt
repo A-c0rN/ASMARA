@@ -11,3 +11,4 @@ colorama
 flask
 flask_sqlalchemy
 mysqlclient
+pyopenssl

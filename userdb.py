@@ -1,8 +1,84 @@
 import pyotp, qrcode, secrets, argparse, mysql.connector, sys, colorama, os
+from datetime import datetime, timedelta
 from colorama import Fore
 from mysql.connector import Error
 
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.hazmat.primitives.serialization import PrivateFormat
+from cryptography.hazmat.primitives.serialization import NoEncryption
+
 colorama.init()
+
+USEQUERY = "USE asmara;"
+
+
+def makeSSL():
+    key_file = "ssl_key.key"
+    cert_file = "ssl_cert.pem"
+    cert_dir = "."
+
+# Check if the key and certificate files exist
+    if not os.path.exists(os.path.join(cert_dir, key_file)) or not os.path.exists(os.path.join(cert_dir, cert_file)):
+        # Generate a new private key
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+        )
+
+        # Define custom names for issuer and subject
+        issuer_name = x509.Name([
+            x509.NameAttribute(NameOID.COMMON_NAME, u"ASMARA Endec"),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"MSNGTXTRS SOFT."),
+            x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
+        ])
+
+        subject_name = x509.Name([
+            x509.NameAttribute(NameOID.COMMON_NAME, u"ASMARA Endec"),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"MSNGTXTRS SOFT."),
+            x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
+        ])
+
+        # Generate a self-signed certificate
+        cert = x509.CertificateBuilder().subject_name(
+            subject_name
+        ).issuer_name(
+            issuer_name
+        ).public_key(
+            private_key.public_key()
+        ).serial_number(
+            x509.random_serial_number()
+        ).not_valid_before(
+            datetime.utcnow()
+        ).not_valid_after(
+            datetime.utcnow() + timedelta(days=365)
+        ).add_extension(
+            x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
+            critical=False,
+        # Sign the certificate with the private key
+        ).sign(private_key, hashes.SHA256())
+
+
+        # Save the private key
+        with open(os.path.join(cert_dir, key_file), "wb") as f:
+            f.write(private_key.private_bytes(
+                encoding=Encoding.PEM,
+                format=PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=NoEncryption()
+            ))
+
+        # Save the certificate
+        with open(os.path.join(cert_dir, cert_file), "wb") as f:
+            f.write(cert.public_bytes(Encoding.PEM))
+
+
+        print("SSL key and certificate generated.")
+    else:
+        print("SSL key and certificate already exist.")
 
 def create_connection():
     connection = None
@@ -10,8 +86,7 @@ def create_connection():
         connection = mysql.connector.connect(
             host='localhost',
             user='username',
-            password='password',
-            database='asmara'
+            password='password'
         )
         print(Fore.YELLOW + "Connection to MariaDB successful" + Fore.WHITE)
     except Error as e:
@@ -25,22 +100,41 @@ def initialize_database(connection):
     # Create the asmara database if it doesn't exist
     cursor.execute("CREATE DATABASE IF NOT EXISTS asmara")
     # Select the asmara database
-    cursor.execute("USE asmara")
+    cursor.execute(USEQUERY)
     # Create the users table if it doesn't exist
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50),
             password VARCHAR(50),
-            secret VARCHAR(100)
-        )
+            secret VARCHAR(100),
+            sudo BOOLEAN DEFAULT FALSE
+        );
     """)
+    cursor.execute("""
+                      CREATE TABLE request (
+       reindex INT AUTO_INCREMENT PRIMARY KEY,
+       response_time FLOAT,
+       date DATETIME,
+       method VARCHAR(255),
+       size INT,
+       status_code INT,
+       path VARCHAR(255),
+       user_agent VARCHAR(255),
+       remote_address VARCHAR(255),
+       exception VARCHAR(255),
+       referrer VARCHAR(255),
+       browser VARCHAR(255),
+       platform VARCHAR(255),
+       mimetype VARCHAR(255)
+   );""")
     connection.commit()
     print(Fore.GREEN + "Database and table initialized successfully." + Fore.WHITE)
 
 def list_users(connection, show_pass):
     cursor = connection.cursor()
     query = "SELECT id, username, password FROM users"
+    cursor.execute(USEQUERY)
     cursor.execute(query)
     result = cursor.fetchall()
     for row in result:
@@ -63,6 +157,7 @@ def remove_user(connection, user_id=None, username=None):
         params = (username,)
     else:
         raise ValueError("Either user ID or username must be provided.")
+    cursor.execute(USEQUERY)
     cursor.execute(query, params)
     affected_rows = cursor.rowcount
     connection.commit()
@@ -96,6 +191,7 @@ def insert_user(connection, username, password):
     secret = secrets.token_hex(16)  # Generate a random secret
     cursor = connection.cursor()
     secret = make2fa(username)
+    cursor.execute(USEQUERY)
     query = """INSERT INTO users (username, password, secret) VALUES (%s, %s, %s)"""
     cursor.execute(query, (username, password, secret))
     connection.commit()
@@ -128,6 +224,8 @@ if __name__ == '__main__':
 
     init_parser = subparsers.add_parser('init', help='Initialize the database and create the users table.')
 
+    mkSSL_parser = subparsers.add_parser('mkSSL', help='Create The Files needed to run in HTTPS/SSL mode')
+
     args = parser.parse_args()
 
     # Check if any arguments were provided
@@ -150,5 +248,7 @@ if __name__ == '__main__':
         list_users(connection, args.show_pass)
     elif args.command == 'init':
         initialize_database(connection)
+    elif args.command == 'mkSSL':
+        makeSSL()
 
     close_connection(connection)

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>ASMARA ENDEC | Encode</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}"> 
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-800">
+
+        <nav class="bg-blue-500 p-2 mb-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <div>
+                    <a href="/" class="text-white text-lg font-bold">ASMARA Home</a>
+                </div>
+                <div>
+                    <a href="/encode" class="text-white text-lg font-bold">Encode</a>
+                </div>
+                <div>
+                    <a href="/" class="text-white text-lg font-bold">Settings</a>
+                </div>
+                <div>
+                    <a href="/logout" class="text-white text-lg font-bold">Logout</a>
+                </div>
+                <div>
+                    <p class="text-white text-lg font-bold">Welcome {{ username }}</p>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-5 bg-white" id="alertForm">
+            <h1 class="text-3xl text-black font-bold mb-5">Encode Alert</h1>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="org">
+                        Originator
+                    </label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="org">
+                        <option value="EAS">EAS - EAS Participant</option>
+                        <option value="CIV">CIV - Civil Authorities</option>
+                        <option value="WXR">WXR - National Weather Service</option>
+                        <option value="PEP">PEP - National Public Warning System</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="areas">
+                        FIPS Codes (31 code limit)
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="areas" type="text" placeholder="Enter codes separated by commas" maxlength="217">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="dur">
+                        Duration, hour:minute
+                    </label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dur">
+                        <option value="0000">00:00</option>
+                        <option value="0015">00:15</option>
+                        <option value="0045">00:45</option>
+                        <option value="0100">01:00</option>
+                        <option value="0130">01:30</option>
+                        <option value="0200">02:00</option>
+                        <option value="0230">02:30</option>
+                        <option value="0300">03:00</option>
+                        <option value="0330">03:30</option>
+                        <option value="0400">04:00</option>
+                        <option value="0430">04:30</option>
+                        <option value="0500">05:00</option>
+                        <option value="0530">05:30</option>
+                        <option value="0600">06:00</option>
+                        <option value="0630">06:30</option>
+                        <option value="0700">07:00</option>
+                        <option value="0800">08:00</option>
+                        <option value="0900">09:00</option>
+                        <option value="1000">10:00</option>
+                        <option value="1100">11:00</option>
+                        <option value="1200">12:00</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="type">
+                        Alert Type
+                    </label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="type">
+                        <option value="DMO">DMO: Practice/Demo Warning</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="station">
+                        Sender (must be 8 characters)
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="station" type="text" placeholder="Enter sender information" pattern="^[a-zA-Z0-9]{8}$" maxlength="8" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" id="submitBtn" type="submit">
+                        SEND ALERT
+                    </button>
+                </div>
+        </div>
+
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div id="footer-right">Webserver Made with ♡ by Reggie Torres and Anastasia Mayer</div>
+        <div id="footer-left">Copyright © 2024 MissingTextures Software</div>
+
+        <div class="fixed bottom-0 right-0 m-4 bg-red-500 text-white p-4 rounded shadow-lg" id="logoutWarning" style="display: none;">
+            <p>You will be logged out in 30 seconds due to inactivity. Click the button below to extend your session.</p>
+            <button onclick="extendSession()" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Extend Session</button>
+        </div>
+
+        <div class="fixed bottom-0 left-0 m-4 bg-blue-500 text-white p-4 rounded shadow-lg" id="alertPopup" style="display: none;">
+            <p id="alertPopupMessage">placeholder</p>
+            <button onclick="hideAlertPopup()" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">OK</button>
+        </div>
+
+        <!-- ... -->
+
+        
+
+        <script>
+            var logoutWarningTimeout;
+            var logoutTimeout =  300000; //   5 minutes in milliseconds
+            var logoutActionTimeout;
+            var isPopupVisible = false; // Flag to track if the popup is visible
+
+            function showLogoutWarning() {
+                document.getElementById('logoutWarning').style.display = 'block';
+                isPopupVisible = true; // Set the flag to true when the popup is shown
+                logoutActionTimeout = setTimeout(logoutUser,  30000); //  30 seconds to click the button
+            }
+
+            function hideLogoutWarning() {
+                document.getElementById('logoutWarning').style.display = 'none';
+                isPopupVisible = false; // Set the flag to false when the popup is hidden
+                clearTimeout(logoutActionTimeout); // Cancel the logout action timeout
+            }
+
+            function extendSession() {
+                hideLogoutWarning();
+                // Call the server to extend the session
+                fetch('/extend_session', { method: 'POST' }).then(response => {
+                    if (response.ok) {
+                        console.log('Session extended successfully');
+                    } else {
+                        console.error('Failed to extend session');
+                    }
+                });
+            }
+
+            function logoutUser() {
+                window.location.href = "/logout";
+            }
+
+            // Show the logout warning after   5 minutes of inactivity
+            window.onload = () => {
+                logoutWarningTimeout = setTimeout(showLogoutWarning, logoutTimeout);
+            };
+
+            // Reset the timer on any interaction, but not if the popup is visible
+            ['mousemove', 'mousedown', 'touchstart', 'click', 'scroll', 'keypress'].forEach(eventName => {
+                window.addEventListener(eventName, () => {
+                    if (!isPopupVisible) {
+                        clearTimeout(logoutWarningTimeout); // Cancel the logout warning timeout
+                        logoutWarningTimeout = setTimeout(showLogoutWarning, logoutTimeout); // Reset the logout warning timeout
+                    }
+                });
+            });
+        </script>
+
+        <script>
+
+            function showAlertPopup(message) {
+                document.getElementById('alertPopupMessage').textContent = message;
+                document.getElementById('alertPopup').style.display = 'block';
+            }
+
+            function hideAlertPopup() {
+                document.getElementById('alertPopup').style.display = 'none';
+            }
+
+            // JavaScript to handle form submission
+            document.getElementById("submitBtn").addEventListener("click", function(event) {
+                // Retrieve form data
+                var formData = {
+                    type: document.getElementById("type").value,
+                    org: document.getElementById("org").value,
+                    dur: document.getElementById("dur").value,
+                    areas: document.getElementById("areas").value,
+                    station: document.getElementById("station").value,
+                };
+
+                // Send POST request with form data
+                fetch("/apiv1/alert/send", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data); // Handle response data
+                    if (data.message === 'Alert sent successfully') {
+                        showAlertPopup('Congratulations, You sent a real alert, If this was a mistake, get ready to get fired from whatever workplace you are at right now! cause this is a LIVE ALERT!');
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    showAlertPopup('Alert Failed to send, THIS IS BAD CONTACT SYSADMIN, IF ITS NOT A SYSTEM ISSUE WE MIGHTVE DROPPED PROD')
+                });
+            });
+        </script>
+    </body>
+</html>
