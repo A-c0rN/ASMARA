@@ -104,7 +104,7 @@ def initialize_database(connection):
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50),
-            password VARCHAR(50),
+            password VARCHAR(128),
             secret VARCHAR(100),
             sudo BOOLEAN DEFAULT FALSE
         );
@@ -209,7 +209,7 @@ if __name__ == '__main__':
     # Subcommand for inserting a user
     insert_parser = subparsers.add_parser('add', help='Insert a new user into the database.')
     insert_parser.add_argument('-u', '--username', required=True, help='Username to insert.')
-    insert_parser.add_argument('-p', '--password', required=True, help='Password to insert.')
+    insert_parser.add_argument('-p', '--password', required=True, help='Password to insert. Max: 128')
 
     # Subcommand for removing a user
     remove_parser = subparsers.add_parser('del', help='Remove a user from the database by ID or username.')

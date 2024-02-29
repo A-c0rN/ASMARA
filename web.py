@@ -75,7 +75,7 @@ statistics = Statistics(app, db, Request)
 class users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
-    password = db.Column(db.String(50))
+    password = db.Column(db.String(128))
     secret = db.Column(db.String(100)) # New column for the OTP secret key
     sudo = db.Column(db.Boolean, default=False) # Boolean field for sudo privileges
 
