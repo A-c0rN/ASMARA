@@ -7,7 +7,7 @@ import socket
 
 #Third Party
 import pyotp
-from flask import Flask, render_template, request, session, redirect, url_for, send_from_directory, flash, jsonify
+from flask import Flask, render_template, request, session, redirect, url_for, send_from_directory, flash, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import desc, func
 from flask_statistics import Statistics
@@ -102,13 +102,13 @@ def favicon():
 @app.route('/')
 @login_required
 def home():
-    username = session.get('username', '')
+    username = request.cookies.get('username')
     return render_template('index.html', username=username)
 
 @app.route('/encode')
 @login_required
 def encode():
-    username = session.get('username', '')
+    username = request.cookies.get('username')
     return render_template('encode.html', username=username)
 
 
@@ -170,7 +170,9 @@ def login():
         user = users.query.filter_by(username=username).first()
         if user and user.password == password:
             # Redirect to OTP verification page
-            return redirect(url_for('verify_code', username=username))
+            response = make_response(redirect(url_for('verify_code')))
+            response.set_cookie('username', username)
+            return response
         else:
             flash('Invalid credentials')
             return redirect(url_for('login'))
@@ -186,7 +188,7 @@ def extend_session():
 @app.route('/verify_code', methods=['GET', 'POST'])
 def verify_code():
     if request.method == 'POST':
-        username = request.args.get('username')
+        username = request.cookies.get('username')
         user_totp_code = request.form.get('code')
         user = users.query.filter_by(username=username).first()
         
