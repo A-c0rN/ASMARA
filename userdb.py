@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.hazmat.primitives.serialization import PrivateFormat
 from cryptography.hazmat.primitives.serialization import NoEncryption
+from hashlib import sha256
 
 
 USEQUERY = "USE asmara;"
@@ -129,21 +130,16 @@ def initialize_database(connection):
     connection.commit()
     print("Database and table initialized successfully.")
 
-def list_users(connection, show_pass):
+def list_users(connection):
     cursor = connection.cursor()
-    query = "SELECT id, username, password FROM users"
+    query = "SELECT id, username FROM users"
     cursor.execute(USEQUERY)
     cursor.execute(query)
     result = cursor.fetchall()
     for row in result:
-        id, username, password = row
-        if show_pass:
-            print(f"{id}/{username} Password:{password}")
-        else:
-            print(f"{id}/{username} Password:N/A")
-
-    if not show_pass:
-        print("Notice: Due to Security Reasons, Password is not shown unless passing --show-pass")        
+        id, username = row
+        print(f"{id}/{username}")
+   
 
 def remove_user(connection, user_id=None, username=None):
     cursor = connection.cursor()
@@ -189,9 +185,11 @@ def insert_user(connection, username, password):
     secret = secrets.token_hex(16)  # Generate a random secret
     cursor = connection.cursor()
     secret = make2fa(username)
+    hashed_password = sha256(password.encode()).hexdigest()
     cursor.execute(USEQUERY)
+
     query = """INSERT INTO users (username, password, secret) VALUES (%s, %s, %s)"""
-    cursor.execute(query, (username, password, secret))
+    cursor.execute(query, (username, hashed_password, secret))
     connection.commit()
     print(f"User {username} inserted successfully into users table with generated secret.")
 
@@ -218,7 +216,7 @@ if __name__ == '__main__':
 
     # Subcommand for listing users..
     list_users_parser = subparsers.add_parser('list', help='List all users in the database.')
-    list_users_parser.add_argument('--show-pass', action='store_true', help='Show passwords for listed users.')
+    
 
     init_parser = subparsers.add_parser('init', help='Initialize the database and create the users table.')
 
@@ -243,7 +241,7 @@ if __name__ == '__main__':
         else:
             print("Please provide either a user ID or a username.")
     elif args.command == 'list':
-        list_users(connection, args.show_pass)
+        list_users(connection)
     elif args.command == 'init':
         initialize_database(connection)
     elif args.command == 'mkSSL':

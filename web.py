@@ -166,9 +166,9 @@ def api_statistics():
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
-        password = request.form.get('password')
+        hashed_password = request.form.get('password')
         user = users.query.filter_by(username=username).first()
-        if user and user.password == password:
+        if user and user.password == hashed_password:
             # Redirect to OTP verification page
             response = make_response(redirect(url_for('verify_code')))
             response.set_cookie('username', username)
