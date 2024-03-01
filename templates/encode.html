@@ -110,7 +110,7 @@
         <div id="footer-left">Copyright © 2024 MissingTextures Software</div>
 
         <div class="fixed bottom-0 right-0 m-4 bg-red-500 text-white p-4 rounded shadow-lg" id="logoutWarning" style="display: none;">
-            <p>You will be logged out in 30 seconds due to inactivity. Click the button below to extend your session.</p>
+            <p>You will be logged out in <span id="countdown">30</span> due to inactivity. Click the button below to extend your session.</p>
             <button onclick="extendSession()" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Extend Session</button>
         </div>
 
@@ -128,21 +128,43 @@
             var logoutTimeout =  300000; //   5 minutes in milliseconds
             var logoutActionTimeout;
             var isPopupVisible = false; // Flag to track if the popup is visible
+            var countdownElement = document.getElementById('countdown');
+            var countdown = 30; // Start at 30 seconds
+
+            function startCountdown() {
+                countdownElement.textContent = countdown;
+                var countdownInterval = setInterval(function() {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        // Perform logout action here if needed
+                    }
+                }, 1000);
+            }
+
+            function stopCountdown() {
+                clearInterval(countdownInterval);
+                countdown = 30;
+            }
 
             function showLogoutWarning() {
                 document.getElementById('logoutWarning').style.display = 'block';
                 isPopupVisible = true; // Set the flag to true when the popup is shown
                 logoutActionTimeout = setTimeout(logoutUser,  30000); //  30 seconds to click the button
+                startCountdown();
             }
 
             function hideLogoutWarning() {
                 document.getElementById('logoutWarning').style.display = 'none';
                 isPopupVisible = false; // Set the flag to false when the popup is hidden
                 clearTimeout(logoutActionTimeout); // Cancel the logout action timeout
+                stopCountdown();
             }
 
             function extendSession() {
                 hideLogoutWarning();
+                stopCountdown();
                 // Call the server to extend the session
                 fetch('/extend_session', { method: 'POST' }).then(response => {
                     if (response.ok) {

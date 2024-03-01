@@ -6,7 +6,7 @@ from datetime import datetime
 import socket
 
 #Third Party
-import pyotp
+from pyotp import TOTP
 from flask import Flask, render_template, request, session, redirect, url_for, send_from_directory, flash, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import desc, func
@@ -193,7 +193,7 @@ def verify_code():
         user = users.query.filter_by(username=username).first()
         
         if user:
-            totp = pyotp.TOTP(user.secret)
+            totp = TOTP(user.secret)
             if totp.verify(user_totp_code):
                 session['logged_in'] = True
                 session['username'] = username
