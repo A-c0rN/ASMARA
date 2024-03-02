@@ -12,6 +12,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, s
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import desc, func
 from flask_statistics import Statistics
+from OpenSSL import crypto
 
 
 def load_or_generate_secret_key(filename='secret_key.txt'):
@@ -28,6 +29,33 @@ def load_or_generate_secret_key(filename='secret_key.txt'):
             file.write(secret_key)
     return secret_key
 
+
+
+def check_certificate_expiration(cert_path):
+    # Load the certificate
+    with open(cert_path, 'rb') as cert_file:
+        cert_data = cert_file.read()
+    x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert_data)
+
+    # Get the expiration date
+    expiration_date = x509.get_notAfter().decode('utf-8')
+    expiration_date = datetime.strptime(expiration_date, '%Y%m%d%H%M%SZ')
+
+    # Check if the certificate is about to expire
+    now = datetime.utcnow()
+    expires_in = expiration_date - now
+    if expires_in.days <= 30: # Check if the certificate expires in 30 days or less
+        print(f"The certificate is about to expire in {expires_in.days} days.")
+        print(f"The certificate is about to expire in {expires_in.days} days.")
+        print(f"The certificate is about to expire in {expires_in.days} days.")
+        print(f"The certificate is about to expire in {expires_in.days} days.")
+        print(f"The certificate is about to expire in {expires_in.days} days.")
+    else:
+        print("The certificate is not about to expire.")
+        print("The certificate is not about to expire.")
+        print("The certificate is not about to expire.")
+        print("The certificate is not about to expire.")
+        print("The certificate is not about to expire.")
 
 
 
@@ -296,4 +324,5 @@ if __name__ == '__main__':
         print("WARNING: Server Is Not Running in HTTPS/SSL Mode! This is very insecure and could expose your credentials to packetsniffers on your network!")
         app.run(debug=True)
     else:
+        check_certificate_expiration(cert_file)
         app.run(debug=True, ssl_context=(cert_file,key_file))

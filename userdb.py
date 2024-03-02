@@ -1,4 +1,4 @@
-import pyotp, qrcode, secrets, argparse, mysql.connector, sys, colorama, os
+import qrcode, secrets, argparse, mysql.connector, sys, os
 from datetime import datetime, timedelta
 from mysql.connector import Error
 
@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.hazmat.primitives.serialization import PrivateFormat
 from cryptography.hazmat.primitives.serialization import NoEncryption
 from hashlib import sha256
-
+from pyotp import TOTP, random_base32
 
 USEQUERY = "USE asmara;"
 
@@ -162,9 +162,9 @@ def remove_user(connection, user_id=None, username=None):
 
 def make2fa(username):
     # Generate a secret key
-    secret = pyotp.random_base32()
+    secret = random_base32()
 
-    totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(name="ASMARA", issuer_name="MSNGTXTURES")
+    totp_uri = TOTP(secret).provisioning_uri(name="ASMARA", issuer_name="MSNGTXTURES")
 
     # Generate a QR code from the TOTP URI
     qr_img = qrcode.make(totp_uri)
