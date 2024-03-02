@@ -5,6 +5,7 @@ from functools import wraps
 from datetime import datetime
 import socket
 
+
 #Third Party
 from pyotp import TOTP
 from flask import Flask, render_template, request, session, redirect, url_for, send_from_directory, flash, jsonify, make_response
@@ -88,6 +89,8 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
+
+
 
 
 @app.route('/assets/<path:filename>')
@@ -206,28 +209,19 @@ def verify_code():
             return redirect(url_for('login'))
     else:
         return render_template('verify_code.html')
+    
 
 
 #Logout Route
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
+    session.pop('sudo_mode', None)
     return redirect(url_for('login'))
 
 class Alert:
     def getJJJHHMM():
-        # Get the current date and time in UTC
-        now = datetime.utcnow()
-
-        # Extract the day of the year (JJJ)
-        day_of_year = now.timetuple().tm_yday
-
-        # Format the current time in   24-hour format (HHMM) in UTC
-        time_24h = now.strftime("%H%M")
-
-        # Combine the day of the year and the time into a single string
-        eas_format = f"{day_of_year:03}{time_24h}"
-        return eas_format
+        return datetime.utcnow().strftime("%j%H%M")
 
 @login_required
 @app.route(API_PREFIX + '/alert/send', methods=['POST'])
