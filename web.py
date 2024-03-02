@@ -177,7 +177,7 @@ def login():
             response.set_cookie('username', username)
             return response
         else:
-            flash('Invalid credentials')
+            flash('401 Invalid credentials')
             return redirect(url_for('login'))
     else:
         return render_template('login.html')

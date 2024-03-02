@@ -39,3 +39,16 @@
 .confirmation-content {
   text-align: center;
 }
+
+.alert {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-error {
+  color: #a94444;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}

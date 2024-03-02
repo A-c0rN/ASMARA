@@ -64,6 +64,16 @@
                         </button>
                     </div>
                 </form>
+                <!-- Add this section right under the sign in button -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="bg-white text-red-500 p-4 rounded shadow mt-4 font-bold">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
             </div>
         </div>
         <div id="footer-right">Webserver Made with ♡ by Reggie Torres and Anastasia Mayer</div>
