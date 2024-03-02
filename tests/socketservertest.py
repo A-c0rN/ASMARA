@@ -57,6 +57,9 @@ def run_server():
                         # if this code was in ASMARA, about now, it would gen a header and run a local alert!
 
                         # run a check here
+
+                        # Example sendAlert command
+                        #sendAlert EAS DMO 00000 0015 0200820 WABC/FM
                         
                         response = "Sent!".encode("utf-8") # do not remove this or else server will think 500 internal error
                         client_socket.send(response)
