@@ -256,7 +256,7 @@ def send_alert_function(type,org,exp,areas,JJJHHMM,station):
     msg = f"sendAlert {org} {type} {areas} {exp} {JJJHHMM} {station}"
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_ip = "127.0.0.1"
-    server_port =  8000
+    server_port =  6765
     client.connect((server_ip, server_port))
 
     # Receive and decode the initial password request message

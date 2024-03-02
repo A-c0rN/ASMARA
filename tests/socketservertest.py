@@ -11,7 +11,7 @@ def authenticate(password):
 def run_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_ip = "127.0.0.1"
-    port =  8000
+    port =  6765
     server.bind((server_ip, port))
     server.listen(0)
     print(f"Listening on {server_ip}:{port}")
