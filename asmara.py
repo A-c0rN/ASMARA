@@ -243,7 +243,8 @@ class AS_MON(Process):
             sev=severity.trace,
         )
         try:
-            if any(version in Popen(["samedec", "-V"], stdout=PIPE).communicate()[0].decode("UTF-8").strip() for version in ["samedec 0.2.", "samedec 0.3.", "samedec 0.4."]):
+            samedec_version = Popen(["samedec", "-V"], stdout=PIPE).communicate()[0].decode("UTF-8").strip()
+            if not samedec_version.startswith("samedec 0.1."):
                 self.__decode__ = Popen(
                     ["samedec", "-r", "24000"],
                     stdout=PIPE,
@@ -259,7 +260,6 @@ class AS_MON(Process):
                 )
                 AS_MAN.killAsmara()
                 exit(1)
-
         except FileNotFoundError:
             utilities.autoPrint(
                 text=f"Samedec is not installed on the computer. Please install SAMEDEC 0.2.3 or higher.",
