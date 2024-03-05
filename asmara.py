@@ -243,13 +243,7 @@ class AS_MON(Process):
             sev=severity.trace,
         )
         try:
-            if (
-                "samedec 0.2." or "samedec 0.3." or "samedec 0.4."
-                in Popen(["samedec", "-V"], stdout=PIPE)
-                .communicate()[0]
-                .decode("UTF-8")
-                .strip()
-            ):
+            if any(version in Popen(["samedec", "-V"], stdout=PIPE).communicate()[0].decode("UTF-8").strip() for version in ["samedec 0.2.", "samedec 0.3.", "samedec 0.4."]):
                 self.__decode__ = Popen(
                     ["samedec", "-r", "24000"],
                     stdout=PIPE,
