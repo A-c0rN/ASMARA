@@ -3,3 +3,5 @@ __pycache__
 secret_key.txt
 ssl_cert.pem
 ssl_key.key
+.log
+.config
