@@ -14,13 +14,14 @@
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
     <body class="bg-gray-800">
+
         <nav class="bg-blue-500 p-2 mb-4">
             <div class="container mx-auto flex justify-between items-center">
                 <div>
                     <a href="/" class="text-white text-lg font-bold">ASMARA Home</a>
                 </div>
                 <div>
-                    <a href="/" class="text-white text-lg font-bold">Encode</a>
+                    <a href="/encode" class="text-white text-lg font-bold">Encode</a>
                 </div>
                 <div>
                     <a href="/" class="text-white text-lg font-bold">Settings</a>
@@ -34,9 +35,43 @@
             </div>
         </nav>
 
-        <div class="content-center">
-            <p class="text-white">STATISTICS GO HERE! NEED SOCKET OR SOMETHING</p>
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4 content-center">
+            <div class="md:flex">
+                <div class="md:flex-shrink-0">
+                    <img class="h-48 w-full object-cover md:w-48" src="/assets/asmara-stats.png" alt="Statistics Icon">
+                </div>
+                <div class="p-8">
+                    <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Statistics</div>
+                    <div id="statistics" class="mt-2">
+                        <!-- Statistics will be loaded here -->
+                    </div>
+                </div>
+            </div>
         </div>
+        <script>
+            fetch('/apiv1/statistics')
+                .then(response => response.json())
+                .then(data => {
+                    // Process and display the data in the 'statistics' div
+                    const statsDiv = document.getElementById('statistics');
+                    statsDiv.innerHTML = ''; // Clear the div first
+                    Object.keys(data).forEach(key => {
+                        const p = document.createElement('p');
+                        if (typeof data[key] === 'object' && data[key] !== null) {
+                            // Handle nested objects like breakdowns
+                            let breakdownStr = '';
+                            Object.entries(data[key]).forEach(([subKey, subValue]) => {
+                                breakdownStr += `${subKey}: ${subValue}, `;
+                            });
+                            p.textContent = `${key}: ${breakdownStr.slice(0, -2)}`; // Remove trailing comma and space
+                        } else {
+                            p.textContent = `${key}: ${data[key]}`;
+                        }
+                        statsDiv.appendChild(p);
+                    });
+                })
+                .catch(error => console.error('Error fetching statistics:', error));
+            </script>
 
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
@@ -45,26 +80,52 @@
         <div id="footer-left">Copyright © 2024 MissingTextures Software</div>
 
         <div class="fixed bottom-0 right-0 m-4 bg-red-500 text-white p-4 rounded shadow-lg" id="logoutWarning" style="display: none;">
-            <p>You will be logged out in 30 seconds due to inactivity. Click the button below to extend your session.</p>
+            <p>You will be logged out in <span id="countdown">30</span> due to inactivity. Click the button below to extend your session.</p>
             <button onclick="extendSession()" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Extend Session</button>
         </div>
         <!-- ... -->
         <script>
             var logoutWarningTimeout;
-            var logoutTimeout = 30000; // 30 seconds in milliseconds
-    
+            var logoutTimeout =  300000; //   5 minutes in milliseconds
+            var logoutActionTimeout;
+            var isPopupVisible = false; // Flag to track if the popup is visible
+            var countdownElement = document.getElementById('countdown');
+            var countdown = 30; // Start at 30 seconds
+
+            function startCountdown() {
+                countdownElement.textContent = countdown;
+                var countdownInterval = setInterval(function() {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        // Perform logout action here if needed
+                    }
+                }, 1000);
+            }
+
+            function stopCountdown() {
+                clearInterval(countdownInterval);
+                countdown = 30;
+            }
+
             function showLogoutWarning() {
                 document.getElementById('logoutWarning').style.display = 'block';
-                logoutWarningTimeout = setTimeout(logoutUser, logoutTimeout);
+                isPopupVisible = true; // Set the flag to true when the popup is shown
+                logoutActionTimeout = setTimeout(logoutUser,  30000); //  30 seconds to click the button
+                startCountdown();
             }
-    
+
             function hideLogoutWarning() {
                 document.getElementById('logoutWarning').style.display = 'none';
-                clearTimeout(logoutWarningTimeout);
+                isPopupVisible = false; // Set the flag to false when the popup is hidden
+                clearTimeout(logoutActionTimeout); // Cancel the logout action timeout
+                stopCountdown();
             }
-    
+
             function extendSession() {
                 hideLogoutWarning();
+                stopCountdown();
                 // Call the server to extend the session
                 fetch('/extend_session', { method: 'POST' }).then(response => {
                     if (response.ok) {
@@ -74,19 +135,24 @@
                     }
                 });
             }
-    
+
             function logoutUser() {
                 window.location.href = "/logout";
             }
-    
-            // Show the logout warning after 5 seconds of inactivity
+
+            // Show the logout warning after   5 minutes of inactivity
             window.onload = () => {
-                setTimeout(showLogoutWarning, logoutTimeout);
+                logoutWarningTimeout = setTimeout(showLogoutWarning, logoutTimeout);
             };
-    
-            // Reset the timer on any interaction
+
+            // Reset the timer on any interaction, but not if the popup is visible
             ['mousemove', 'mousedown', 'touchstart', 'click', 'scroll', 'keypress'].forEach(eventName => {
-                window.addEventListener(eventName, hideLogoutWarning);
+                window.addEventListener(eventName, () => {
+                    if (!isPopupVisible) {
+                        clearTimeout(logoutWarningTimeout); // Cancel the logout warning timeout
+                        logoutWarningTimeout = setTimeout(showLogoutWarning, logoutTimeout); // Reset the logout warning timeout
+                    }
+                });
             });
         </script>
     </body>

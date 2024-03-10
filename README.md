@@ -113,32 +113,37 @@ To test the webserver, install mariadb and do the following commands
 sudo mariadb
 CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost';
-CREATE DATABASE asmara;
-USE asmara;
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50),
-    password VARCHAR(50)
-);
 ```
 then, go in web.py and change line 21 to the information you filled out for your table..
+do the same for line 11-14 in userdb.py
 
-to make a user, do the commands in mariadb
+then run the command
 ```
-USE asmara;
-INSERT INTO users (username, password) VALUES ('username', 'password');
+python3 userdb.py init
+```
+
+to make a user, do the following command
+```
+python3 userdb.py add -u username -p password
+
+install an authenticator app on your phone, as long as it has support for qr codes, it will work, scan the qr code left in the folder qrcodes that has your username in the filename.. that is your 2FA code..,
 ```
 
 
 To run the webserver, do the following
 ```
-
-python3 -m pip install flask flask_sqlalchemy mysqlclient pytz
-
 python3 web.py 
 ```
 it should work, you can now go to the ip:port/ and it should redirect to the login page.
 
+### HTTPS/SSL
+You might've noticed that when you run the server normally, you get a warning, This is because you haven't setup HTTPS/SSL. All you have to do to set it up is run
+
+```
+python3 userdb.py mkSSL
+```
+
+And now you have a secure server, you might get a warning on a browser though, thats because it's selfsigned, but it should still be just as secure as if you got it signed by a CA
 
 ## Changelog
 DO LATER
