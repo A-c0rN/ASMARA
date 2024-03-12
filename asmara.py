@@ -2,6 +2,7 @@
 Note: Please do absolute imports, it allows me to clean up shit we don't use, and doesn't import extra code. It should be more efficient anyways.
 """
 # Standard Library
+from argparse import ArgumentParser
 from datetime import datetime as DT
 from json import dump, load
 from multiprocessing import Process, active_children
@@ -9,34 +10,21 @@ from os import getcwd, path, remove, walk
 from random import choice, shuffle
 from subprocess import PIPE, Popen
 from sys import exit
-from threading import Thread, Barrier, enumerate, current_thread
+from threading import Barrier, Thread, current_thread, enumerate
 from time import mktime, sleep
-from warnings import filterwarnings
-from argparse import ArgumentParser
 
 # Third-Party
 from EAS2Text.EAS2Text import EAS2Text
 from EASGen.EASGen import EASGen
-from numpy import (
-    append,
-    blackman,
-    empty,
-    fft,
-    frombuffer,
-    int16,
-    log,
-    log10,
-)
+from numpy import append, blackman, empty, fft, frombuffer, int16, log, log10
 from pydub import AudioSegment
 from pydub.effects import normalize
 from pydub.generators import Sine
 from pydub.utils import make_chunks, mediainfo
-from requests import get, exceptions
+from requests import exceptions, get
 
 # First-Party
-from utilities import utilities, severity
-
-filterwarnings("ignore")
+from utilities import severity, utilities
 
 currentAlert = []
 liveAlert = {}
@@ -84,12 +72,12 @@ class AS_MON(Process):
         self.__decThread__ = Thread(
             target=self.__decoder__,
             name=f"DECODER-{self.__monitorName__}",
-            daemon=True,
+            daemon=False,
         )
         self.__monThread__ = Thread(
             target=self.__recorder__,
             name=f"MONITOR-{self.__monitorName__}",
-            daemon=True,
+            daemon=False,
         )
         utilities.autoPrint(
             text=f"Monitor {self.__monitorName__}: Created.",
@@ -102,20 +90,26 @@ class AS_MON(Process):
 
     def killMon(self):
         self.__monitor__["State"] = False
-        while self.__decode__.poll() == None:
+        if self.__decode__ != None:
             self.__decode__.terminate()
-        utilities.autoPrint(
-            text=f"Monitor {self.__monitorName__}: Decoder Terminated.",
-            classType="DECODER",
-            sev=severity.trace,
-        )
-        while self.__stream__.poll() == None:
+            self.__decode__.wait()
+            self.__decode__ = None
+            utilities.autoPrint(
+                text=f"Monitor {self.__monitorName__}: Decoder Terminated.",
+                classType="DECODER",
+                sev=severity.trace,
+            )
+        if self.__stream__ != None:
             self.__stream__.terminate()
-        utilities.autoPrint(
-            text=f"Monitor {self.__monitorName__}: Recorder Terminated.",
-            classType="MONITOR",
-            sev=severity.trace,
-        )
+            self.__stream__.wait()
+            self.__stream__ = None
+            utilities.autoPrint(
+                text=f"Monitor {self.__monitorName__}: Recorder Terminated.",
+                classType="DECODER",
+                sev=severity.trace,
+            )
+        self.__monThread__.join()
+        self.__decThread__.join()
         try:
             del self.__monitors__[self.__monitorName__]
         except ValueError:
@@ -151,6 +145,9 @@ class AS_MON(Process):
             )
 
     def __ATTNDetection__(self, pkt, bufferSize, sampleRate, window):
+        ## PLEASE NOTE:
+        # There is a known bug in this code that can cause a failed ATTN detect.
+        # This is caused by Python sometimes shuffling lists around, so they're not in the order we expect them to be.
         dBDect = 10
         fin = []
         bandPasses = [
