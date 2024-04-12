@@ -368,29 +368,7 @@ class AS_MON(Process):
                                                     0,
                                                 )
                                             )
-                                            utilities.autoPrint(
-                                                text=f"Monitor {self.__monitorName__}: Alert is approx {wait_time} minutes early, waiting for effect...",
-                                                classType="DECODER",
-                                                sev=severity.debug,
-                                            )
-                                            filt[
-                                                "Actions"
-                                            ] = f"Relay:{wait_time}"
-                                        self.__alertData__ = {
-                                            "Monitor": f"Monitor {self.__monitorName__}",
-                                            "Time": now,
-                                            "Event": " ".join(
-                                                headerTranslation.evntText.split(
-                                                    " "
-                                                )[
-                                                    1:
-                                                ]
-                                            ),
-                                            "Protocol": noCall,
-                                            "From": headerTranslation.callsign,
-                                            "Filter": filt,
-                                            "Length": 0,
-                                        }
+                                            
                                         if (
                                             "Live" in filt["Actions"]
                                             and not self.__liveStatus__()
@@ -1271,7 +1249,7 @@ class AS_MON(Process):
                 sev=severity.info,
             )
             currentAlert.append(data)
-            
+
             t = Thread(
                 target=alertWait,
                 name=f"RELAY-{self.__monitorName__}",
