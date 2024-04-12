@@ -523,7 +523,7 @@ class AS_MON(Process):
                                                         AS_MAN.version,
                                                         email=AS_MAN.__email__,
                                                     )
-                                    else:
+                                    
                                         utilities.autoPrint(
                                             text=f"Monitor {self.__monitorName__}: Alert is Not in Filter.",
                                             classType="DECODER",
