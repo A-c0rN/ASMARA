@@ -347,23 +347,6 @@ class AS_MON(Process):
                                     classType="DECODER",
                                     sev=severity.trace,
                                 )
-                                if now >= endTime:
-                                    utilities.autoPrint(
-                                        text=f"Monitor {self.__monitorName__}: Alert is Expired.",
-                                        classType="DECODER",
-                                        sev=severity.alert,
-                                    )
-                                    self.__monitor__["Alert"] = False
-                                elif (now - startTime) < 0 and int(
-                                    now - startTime
-                                ) < -300:
-                                    utilities.autoPrint(
-                                        text=f"Monitor {self.__monitorName__}: Alert is *Very* Expired.",
-                                        classType="DECODER",
-                                        sev=severity.alert,
-                                    )
-                                    self.__monitor__["Alert"] = False
-                                else:
                                     if filt["Matched"]:
                                         utilities.autoPrint(
                                             text=f"Monitor {self.__monitorName__}: Alert is New and Valid.",
