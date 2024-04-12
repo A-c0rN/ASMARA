@@ -347,7 +347,7 @@ class AS_MON(Process):
                                     classType="DECODER",
                                     sev=severity.trace,
                                 )
-                                    if filt["Matched"]:
+                                if filt["Matched"]:
                                         utilities.autoPrint(
                                             text=f"Monitor {self.__monitorName__}: Alert is New and Valid.",
                                             classType="DECODER",
