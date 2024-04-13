@@ -1285,23 +1285,6 @@ class AS_MON(Process):
                 sev=severity.info,
             )
             currentAlert.append(data)
-        else:
-            utilities.autoPrint(
-                text=f"Waiting for {action.split(':')[1]} minutes > Alert {event} from {call}",
-                classType="RELAY",
-                sev=severity.info,
-            )
-            t = Thread(
-                target=alertWait,
-                name=f"RELAY-{self.__monitorName__}",
-                args=(
-                    data,
-                    action,
-                ),
-                daemon=True,
-            )
-            t.start()
-        return
 
 
 class AS_MAN:
