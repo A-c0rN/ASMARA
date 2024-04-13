@@ -347,6 +347,23 @@ class AS_MON(Process):
                                     classType="DECODER",
                                     sev=severity.trace,
                                 )
+                                # if now >= endTime:
+                                #     utilities.autoPrint(
+                                #         text=f"Monitor {self.__monitorName__}: Alert is Expired.",
+                                #         classType="DECODER",
+                                #         sev=severity.alert,
+                                #     )
+                                #     self.__monitor__["Alert"] = False
+                                # elif (now - startTime) < 0 and int(
+                                #     now - startTime
+                                # ) < -300:
+                                #     utilities.autoPrint(
+                                #         text=f"Monitor {self.__monitorName__}: Alert is *Very* Expired.",
+                                #         classType="DECODER",
+                                #         sev=severity.alert,
+                                #     )
+                                #     self.__monitor__["Alert"] = False
+                                # else:
                                 if filt["Matched"]:
                                         utilities.autoPrint(
                                             text=f"Monitor {self.__monitorName__}: Alert is New and Valid.",
@@ -860,7 +877,16 @@ class AS_MON(Process):
                                 classType="MONITOR",
                                 sev=severity.debug,
                             )
-
+                            header = f"{self.__alertData__['Protocol']}{AS_MAN.__callsign__}-"
+                            headerTranslation = EAS2Text(header)
+                            alertName = f"EAS_LIVE_{headerTranslation.org}-{headerTranslation.evnt}-{headerTranslation.timeStamp}-{headerTranslation.callsign.replace('/', '-').strip().replace(' ', '-')}"
+                            alert = EASGen.genHeader(
+                                header_data=header,
+                                mode=AS_MAN.__config__["Emulation"],
+                            )
+                            tone = EASGen.genATTN(
+                                mode=AS_MAN.__config__["Emulation"]
+                            )
                             buffTemp = (
                                 round((len(alert) + len(tone)) / 1000, 0)
                                 * 3.125
@@ -1262,7 +1288,12 @@ class AS_MON(Process):
                 sev=severity.info,
             )
             currentAlert.append(data)
-            
+        else:
+            utilities.autoPrint(
+                text=f"Waiting for {action.split(':')[1]} minutes > Alert {event} from {call}",
+                classType="RELAY",
+                sev=severity.info,
+            )
             t = Thread(
                 target=alertWait,
                 name=f"RELAY-{self.__monitorName__}",
