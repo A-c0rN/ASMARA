@@ -860,16 +860,7 @@ class AS_MON(Process):
                                 classType="MONITOR",
                                 sev=severity.debug,
                             )
-                            header = f"{self.__alertData__['Protocol']}{AS_MAN.__callsign__}-"
-                            headerTranslation = EAS2Text(header)
-                            alertName = f"EAS_LIVE_{headerTranslation.org}-{headerTranslation.evnt}-{headerTranslation.timeStamp}-{headerTranslation.callsign.replace('/', '-').strip().replace(' ', '-')}"
-                            alert = EASGen.genHeader(
-                                header_data=header,
-                                mode=AS_MAN.__config__["Emulation"],
-                            )
-                            tone = EASGen.genATTN(
-                                mode=AS_MAN.__config__["Emulation"]
-                            )
+
                             buffTemp = (
                                 round((len(alert) + len(tone)) / 1000, 0)
                                 * 3.125
