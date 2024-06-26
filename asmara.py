@@ -326,6 +326,7 @@ class AS_MON(Process):
                                 x = DT.strptime(
                                     decode.split("-")[-3], "%j%H%M"
                                 )
+                                expiryOffset = 0
                                 timeStamp = decode.split("-")[-4].split("+")[1]
                                 currDate = DT.now(TZ.utc)
                                 currYear = currDate.today().year
