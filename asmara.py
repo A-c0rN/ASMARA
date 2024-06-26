@@ -34,9 +34,7 @@ from pydub.effects import normalize
 from pydub.generators import Sine
 from pydub.utils import make_chunks, mediainfo
 from requests import get, exceptions
-
-#couldnt find the aboslute import for the function used here
-import calendar as Calendar
+from calendar import isleap
 
 # First-Party
 from utilities import utilities, severity
@@ -331,7 +329,7 @@ class AS_MON(Process):
                                 currDate = DT.now(TZ.utc)
                                 currYear = currDate.today().year
                                 leapDate = f"2/29/{currYear}"
-                                if Calendar.isleap(currYear):
+                                if isleap(currYear):
                                     if DT.now(TZ.utc).strftime('%Y-%m-%d') > DT.strptime(leapDate,"%m/%d/%Y").strftime('%Y-%m-%d'):
                                         expiryOffset = 86400
                                     elif DT.now(TZ.utc).strftime('%Y-%m-%d') == DT.strptime(leapDate,"%m/%d/%Y").strftime('%Y-%m-%d'):
