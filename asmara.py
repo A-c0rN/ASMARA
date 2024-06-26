@@ -3,6 +3,8 @@ Note: Please do absolute imports, it allows me to clean up shit we don't use, an
 """
 # Standard Library
 from datetime import datetime as DT
+from datetime import timezone as TZ
+from datetime import timedelta as timedelta
 from json import dump, load
 from multiprocessing import Process, active_children
 from os import getcwd, path, remove, walk
@@ -32,6 +34,9 @@ from pydub.effects import normalize
 from pydub.generators import Sine
 from pydub.utils import make_chunks, mediainfo
 from requests import get, exceptions
+
+#couldnt find the aboslute import for the function used here
+import calendar as Calendar
 
 # First-Party
 from utilities import utilities, severity
@@ -322,6 +327,18 @@ class AS_MON(Process):
                                     decode.split("-")[-3], "%j%H%M"
                                 )
                                 timeStamp = decode.split("-")[-4].split("+")[1]
+                                currDate = DT.now(TZ.utc)
+                                currYear = currDate.today().year
+                                leapDate = f"2/29/{currYear}"
+                                if Calendar.isleap(currYear):
+                                    if DT.now(TZ.utc).strftime('%Y-%m-%d') > DT.strptime(leapDate,"%m/%d/%Y").strftime('%Y-%m-%d'):
+                                        expiryOffset = 86400
+                                    elif DT.now(TZ.utc).strftime('%Y-%m-%d') == DT.strptime(leapDate,"%m/%d/%Y").strftime('%Y-%m-%d'):
+                                        midnight = (DT.now(TZ.utc) + timedelta(days=1)).replace(hour=0, minute=0, microsecond=0, second=0)
+                                        expiryOffset = 86400 - (DT.now(TZ.utc) - midnight).seconds
+                                        print(expiryOffset)
+                                    else: 
+                                        expiryOffset = 0
                                 startTime = mktime(
                                     DT(
                                         DT.utcnow().year,
@@ -335,7 +352,7 @@ class AS_MON(Process):
                                     (int(timeStamp[:2]) * 60) * 60
                                     + int(timeStamp[2:]) * 60
                                 )
-                                now = mktime(DT.utcnow().timetuple())
+                                now = mktime(DT.utcnow().timetuple()) + expiryOffset
                                 filt = self.__FilterManager__(
                                     headerTranslation.org,
                                     headerTranslation.evnt,
